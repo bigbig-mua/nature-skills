@@ -1,6 +1,8 @@
 name: Sync Nature Skills for CC Switch
 
 on:
+  schedule:
+    - cron: '17 3 * * *'
   workflow_dispatch:
 
 permissions:
@@ -19,18 +21,18 @@ jobs:
       - name: Check out the fork
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Sync the two skill directories and license
+      - name: Sync the complete skills directory and license
         shell: bash
         run: |
           set -euo pipefail
 
           upstream="$RUNNER_TEMP/nature-skills-upstream"
           archive="$RUNNER_TEMP/nature-skills-cc-switch.tar"
-          paths=(LICENSE skills/nature-polishing skills/nature-shared)
+          paths=(LICENSE skills)
 
           git clone --quiet --depth=1 --filter=blob:none --sparse --branch main \
             https://github.com/Yuan1z0825/nature-skills.git "$upstream"
-          git -C "$upstream" sparse-checkout set skills/nature-polishing skills/nature-shared
+          git -C "$upstream" sparse-checkout set skills
           for required in LICENSE skills/nature-polishing/SKILL.md skills/nature-shared/SKILL.md; do
             test -s "$upstream/$required"
           done
@@ -50,7 +52,7 @@ jobs:
 
           while IFS= read -r -d '' path; do
             case "$path" in
-              LICENSE|skills/nature-polishing/*|skills/nature-shared/*) ;;
+              LICENSE|skills/*) ;;
               *)
                 printf 'Unexpected file on cc-switch: %s\n' "$path" >&2
                 exit 1
