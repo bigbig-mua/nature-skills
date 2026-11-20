@@ -29,7 +29,7 @@ jobs:
 
           while IFS= read -r -d '' path; do
             case "$path" in
-              LICENSE|skills/nature-polishing/*|skills/nature-shared/*) ;;
+              README.md|LICENSE|skills/nature-polishing/*|skills/nature-shared/*) ;;
               *)
                 printf 'Unexpected file on cc-switch: %s\n' "$path" >&2
                 exit 1
